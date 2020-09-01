@@ -17,10 +17,17 @@ const PostIndex = () => {
   const renderPosts = () => {
     return posts.map((post) => {
       return (
-        <article key={post.id}>
-          <h2>{post.title}</h2>
-          <small>{post.categories}</small>
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        <article
+          key={post.id}
+          style={{
+            border: "1px solid black",
+            padding: "10px",
+            marginBottom: "20px",
+          }}
+        >
+          <Link to={`/posts/${post.id}`}>
+            <h2>{post.title}</h2>
+          </Link>
         </article>
       );
     });
@@ -28,8 +35,11 @@ const PostIndex = () => {
 
   return (
     <section>
-      <Link to="/posts/new">Add a post</Link>
-      <h1>Post Index</h1>
+      <Link to="/posts/new" style={{ display: "block", float: "right" }}>
+        Add a post
+      </Link>
+      <h1 style={{ clear: "both" }}>Post Index</h1>
+      <hr />
       {renderPosts()}
     </section>
   );

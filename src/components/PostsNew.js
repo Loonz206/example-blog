@@ -1,34 +1,57 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { createPost } from "../actions/index";
 
 const PostNew = (props) => {
-  const { handleSubmit } = props;
+  const { handleSubmit, history } = props;
 
-  const onSubmit = (values) => console.log(values);
+  const onSubmit = (values) => {
+    // this is where the action creator should be fired
+    createPost(values, () => {
+      history.push("/");
+    });
+  };
 
   const errorMessage = (field) => {
-    if (field.meta.error) {
-      return (
-        <div className="ui pointing red basic label">{field.meta.error}</div>
-      );
+    const {
+      meta: { error },
+    } = field;
+    if (error) {
+      return <div className="ui pointing red basic label">{error}</div>;
     }
   };
 
   const renderField = (field) => {
+    // not a fan of destructoring this too deep
+    const {
+      label,
+      meta: { touched, error },
+    } = field;
+    const className = `field ${touched && error ? `error` : ""}`;
     return (
-      <div className="field">
-        <label htmlFor="">{field.label}</label>
+      <div className={className}>
+        <label htmlFor="">{label}</label>
         <input type="text" {...field.input} />
-        {field.meta.touched ? errorMessage(field) : ""}
+        {touched ? errorMessage(field) : ""}
       </div>
     );
   };
   return (
-    <div className="ui container" style={{ margin: "20px auto" }}>
+    <div>
+      <h1>Create Post</h1>
       <form className="ui form" onSubmit={handleSubmit(onSubmit)}>
         <Field name="title" label="Title" component={renderField} />
         <Field name="categories" label="Categories" component={renderField} />
         <Field name="content" label="Content" component={renderField} />
+        <Link
+          to="/"
+          className="ui button danger"
+          style={{ marginRight: "1em" }}
+        >
+          Cancel
+        </Link>
         <button type="submit" className="ui button primary">
           Submit
         </button>
@@ -57,4 +80,4 @@ const validate = (values) => {
 export default reduxForm({
   validate,
   form: "PostsNewForm",
-})(PostNew);
+})(connect(null, { createPost })(PostNew));
