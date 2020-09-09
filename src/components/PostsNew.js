@@ -1,8 +1,24 @@
+import _ from "lodash";
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { createPost } from "../actions/index";
+
+const fieldConfig = {
+  title: {
+    type: "input",
+    label: "Title for Post",
+  },
+  categories: {
+    type: "input",
+    label: "Enter some categories",
+  },
+  content: {
+    type: "textarea",
+    label: "Post Content",
+  },
+};
 
 const PostNew = (props) => {
   const { handleSubmit, history } = props;
@@ -63,15 +79,11 @@ const PostNew = (props) => {
 const validate = (values) => {
   const errors = {};
   // validate the inputs
-  if (!values.title) {
-    errors.title = `Enter a title!`;
-  }
-  if (!values.categories) {
-    errors.categories = `Enter some categories!`;
-  }
-  if (!values.content) {
-    errors.content = `Enter some content!`;
-  }
+  _.each(fieldConfig, (type, field) => {
+    if (!values[field]) {
+      errors[field] = `Enter ${field}`;
+    }
+  });
   // if errors is empty its ok to submit
   // errors have any properties redux assumes invalid
   return errors;
@@ -79,5 +91,6 @@ const validate = (values) => {
 
 export default reduxForm({
   validate,
+  fields: _.keys(fieldConfig),
   form: "PostsNewForm",
 })(connect(null, { createPost })(PostNew));
