@@ -7,10 +7,14 @@ import promise from "redux-promise";
 import registerServiceWorker from "./utils/registerServiceWorker";
 import App from "./components/App";
 
+let store;
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 // add middleWares here
-const store = createStore(reducers, composeEnhancers(applyMiddleware(promise)));
-
+if (process.env.NODE_ENV === "development") {
+  store = createStore(reducers, composeEnhancers(applyMiddleware(promise)));
+} else {
+  store = createStore(reducers, applyMiddleware(promise));
+}
 ReactDOM.render(
   <Provider store={store}>
     <App />
